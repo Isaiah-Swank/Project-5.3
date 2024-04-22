@@ -1,8 +1,10 @@
-#define SENDER_HANDLER_H
 #ifndef SENDER_HANDLER_H
+#define SENDER_HANDLER_H
 
 
-#include "main.h" // For Client struct
+#include "properties.h" 
+#include "message.h"    
+#include "main.h" 
 typedef enum {
     REQUEST_JOIN,
     REQUEST_LEAVE,
@@ -10,10 +12,12 @@ typedef enum {
     REQUEST_SHUTDOWN_ALL,
     REQUEST_NOTE
 } RequestType;
-// Handles the input from the user
-void handle_input(char *input, Client *client);
 
-void send_request(Client *client, RequestType type);
 
-#endif // SENDER_HANDLER_H
+
+
+void *send_to_server(void *arg);
+
+#endif 
+
 
