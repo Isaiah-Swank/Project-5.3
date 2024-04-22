@@ -1,74 +1,43 @@
-// message.c file
+// message.h file
 
-#include "message.h"
+#ifndef MESSAGE_H
+#define MESSAGE_H
 
-Message* new_message(int type, ChatNode* chat_node_ptr, char* note)
+#include "chat_node.h"
+#include "stddef.h"
+#include <unistd.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+
+// COMMAND CONSTANTS
+#define JOIN         1
+#define LEAVE        2
+#define NOTE         3
+#define SHUTDOWN     4
+#define SHUTDOWN_ALL 5
+// Commands for displaying to other participants
+#define JOINING      6
+#define LEFT         7
+
+// Fixed length of a NOTE command
+typedef char Note[64];
+
+
+// Message sent over the network
+typedef struct message_struct
 {
-    Message* new_message = malloc(sizeof(Message));
+    unsigned char type;
+    ChatNode chat_node;
+    Note note;
+} Message;
 
-    // set the new message to the indivdual JOIN message
-    new_message->type = type;
-    new_message->chat_node = *chat_node_ptr;
-    strncpy(new_message->note, note, sizeof(new_message->note) -1);
+// Function Prototypes
+Message* new_message(int type, ChatNode* chat_node_ptr, char* note);
+ssize_t  send_message(int socket, Message* message_ptr);
+ssize_t  recieve_message(int socket, Message* message_ptr);
 
-    // return the new message
-    return new_message;
-}
-ssize_t send_message(int socket, Message* message_ptr)
-{
-
-    ssize_t bytes_sent;
-    
-    // send the message to the IP in the socket
-    bytes_sent = send(socket, message_ptr, sizeof(Message), 0);
-
-    // check if there was an error sending the message
-    if(bytes_sent == -1)
-    {
-        perror("Error sending message");
-    }
-
-    // return the number of bytes sent
-    return bytes_sent;
-}
-ssize_t recieve_message(int socket, Message* message_ptr)
-{
-    int index = 0;
-    size_t bytes_read;
-
-    // iterate through the message
-    while( index < sizeof(message_ptr->note) - 1)
-    {
-        // read the current character
-        bytes_read = read(socket, message_ptr->note + index, sizeof(message_ptr->note) - index - 1);
-
-        // check if error reading current byte
-        if(bytes_read <= 0)
-        {
-            // print error message
-            perror("Error reading message");
-            return bytes_read;
-        }
-
-        // increment the index
-        index += bytes_read;
-
-        // check if at the end of the message
-        if(message_ptr->note[index - 1] == '\0')
-        {
-            // break off since the message is recieved
-            break; 
-        }
-
-        // print the new message
-        printf("%s\n", message_ptr->note);
-
-        // return the index
-        return index;
-    }
-}
-
-int main()
-{
-	return 0;
-}
+#endif
