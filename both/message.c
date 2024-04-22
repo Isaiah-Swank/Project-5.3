@@ -4,7 +4,7 @@
 
 Message* new_message(int type, ChatNode* chat_node_ptr, char* note)
 {
-    Message* new_message;
+    Message* new_message = malloc(sizeof(Message));
 
     // switch statement checking for Individual or Group Messages
     switch(type) {
@@ -85,29 +85,38 @@ Message* new_message(int type, ChatNode* chat_node_ptr, char* note)
 }
 size_t send_message(int socket, Message* message_ptr)
 {
-    // send the message to the IP in the socket
-    send(socket, message_ptr, strlen(message_ptr), 0);
 
-    // disconnect from the socket
-    return NULL; // stub return
+    size_t bytes_sent;
+    
+    // send the message to the IP in the socket
+    bytes_sent = send(socket, message_ptr, sizeof(Message), 0);
+
+    // return the number of bytes sent
+    return bytes_sent;
 }
 size_t recieve_message(int socket, Message* message_ptr)
 {
     int index = 0;
+    size_t bytes_read;
 
     // iterate through the message
-    while( message_ptr->note[index] != "\0" )
+    while( message_ptr->note[index - 1] != '\0' )
     {
         // recieve the message from the IP in the socket
-        read(socket, message_ptr->note, strlen(message_ptr->note));
+        bytes_read = read(socket, message_ptr->note, strlen(message_ptr->note));
 
         // increment the index
-        index += 1;
+        index += bytes_read;
     }
         
     // print the recieved message
     printf("%s\n", message_ptr->note);
 
-    // return NULL
-    return NULL; // stub return
+    // return number of bytes read
+    return bytes_read;
+}
+
+int main()
+{
+	return 0;
 }
