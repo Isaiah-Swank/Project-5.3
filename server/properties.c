@@ -7,7 +7,7 @@
 
 #define DBG
 #include "dbg.h"
-
+#include <stdio.h>
 #include "properties.h"
 
 
@@ -131,21 +131,3 @@ void property_list_add_property(Properties* properties, Property* property)
 /* Example driver to show usage of the property functions                  */
 /* To run, remove underscore!                                              */
 /* *********************************************************************** */
-
-#include <stdio.h>
-#include "properties.h"
-
-int _main(int argc, const char * argv[]) {
-
-    char* properties_file = "test.properties";
-    Properties* properties;
-    char* key = "MY_PORT";
-    char* value;
-    
-    properties = property_read_properties(properties_file);
-    value = property_get_property(properties, key);
-    
-    printf("\nValue for %s: %s\n", key, value);
-
-    return EXIT_SUCCESS;
-}
