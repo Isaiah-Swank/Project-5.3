@@ -24,10 +24,11 @@ void *talk_to_client(void *arg) {
             int socket_to_chat_node;
             struct addrinfo hints, *server_info;
             char port_string[6];
+            char ip_string[INET_ADDRSTRLEN];
 
             pthread_mutex_lock( &mutex_chat_node_list );
 
-            message.type = 6;   //set type to JOINING
+            message.type = JOINING;   //set type to JOINING
 
             ChatNodeListElement *current = chat_nodes->first;
 
@@ -38,8 +39,10 @@ void *talk_to_client(void *arg) {
                 hints.ai_socktype = SOCK_STREAM;
                 hints.ai_family = AF_INET;
                 sprintf(port_string, "%u", current->chat_node.port);
+                
+                inet_ntop(AF_INET, &(current->chat_node.ip), ip_string, INET_ADDRSTRLEN);
 
-                getaddrinfo(ip_ntop(current->chat_node.ip), port_string, &hints, &server_info);
+                getaddrinfo(ip_string, port_string, &hints, &server_info);
 
                 socket_to_chat_node = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
 
@@ -65,7 +68,6 @@ void *talk_to_client(void *arg) {
         {
             int socket_to_chat_node;
             struct addrinfo hints, *server_info;
-            int error;
             char port_string[6];
 
             pthread_mutex_lock( &mutex_chat_node_list );
@@ -73,7 +75,7 @@ void *talk_to_client(void *arg) {
             //remove chat node from list
             chat_nodes_remove_node(chat_nodes, &message.chat_node);
             
-            message.type = 7;   //set type to LEFT
+            message.type = LEFT;   //set type to LEFT
 
             ChatNodeListElement *current = chat_nodes->first;
 
@@ -84,8 +86,10 @@ void *talk_to_client(void *arg) {
                 hints.ai_socktype = SOCK_STREAM;
                 hints.ai_family = AF_INET;
                 sprintf(port_string, "%u", current->chat_node.port);
+                
+                inet_ntop(AF_INET, &(current->chat_node.ip), ip_string, INET_ADDRSTRLEN);
 
-                getaddrinfo(ip_ntop(current->chat_node.ip), port_string, &hints, &server_info);
+                getaddrinfo(ip_string, port_string, &hints, &server_info);
 
                 socket_to_chat_node = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
 
@@ -128,7 +132,9 @@ void *talk_to_client(void *arg) {
                 hints.ai_family = AF_INET;
                 sprintf(port_string, "%u", current->chat_node.port);
 
-                getaddrinfo(ip_ntop(current->chat_node.ip), port_string, &hints, &server_info);
+                inet_ntop(AF_INET, &(current->chat_node.ip), ip_string, INET_ADDRSTRLEN);
+
+                getaddrinfo(ip_string, port_string, &hints, &server_info);
 
                 socket_to_chat_node = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
 
@@ -166,7 +172,9 @@ void *talk_to_client(void *arg) {
                 hints.ai_family = AF_INET;
                 sprintf(port_string, "%u", current->chat_node.port);
 
-                getaddrinfo(ip_ntop(current->chat_node.ip), port_string, &hints, &server_info);
+                inet_ntop(AF_INET, &(current->chat_node.ip), ip_string, INET_ADDRSTRLEN);
+
+                getaddrinfo(ip_string, port_string, &hints, &server_info);
 
                 socket_to_chat_node = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
 
@@ -176,7 +184,7 @@ void *talk_to_client(void *arg) {
                 }
 
                 //send message through socket 
-                send_message( socket_to_chat_node, &message );
+                send_message( socket_to_chat_node, message_ptr );
                 
                 close(socket_to_chat_node);
                 current = current->next;
