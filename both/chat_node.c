@@ -121,6 +121,28 @@ int chat_nodes_remove_node(ChatNodeList* chat_node_list, ChatNode* chat_node)
     
 }
 
+void chat_nodes_free(ChatNodeList* chat_node_list)
+{
+    // start at the beginning of the list
+    ChatNodeListElement* current = chat_node_list->first;
+
+    // loop through the list
+    while(current != NULL)
+    {
+        // move to the next element in the list
+        ChatNodeListElement* next = current->next;
+
+        // free the current element
+        free(current);
+
+        // set the current to next
+        current = next;
+    }
+
+    // free the list
+    free(chat_node_list);
+}
+
 // compare two chat nodes
 bool chat_node_equal(ChatNode* first, ChatNode* second)
 {
