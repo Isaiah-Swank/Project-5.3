@@ -6,29 +6,29 @@
 ChatNode* chat_node_new(unsigned int ip, unsigned int port, char* name)
 {
     // create a new chat node
-    ChatNode newNode;
+    ChatNode* newNode;
 
     // populate the new chat node
-    newNode.ip = ip;
-    newNode.port = port;
-    newNode.name = name;
+    newNode->ip = ip;
+    newNode->port = port;
+    strcpy(newNode->name, name);
 
     // return the new chat node
-    return &newNode;           // stub return
+    return newNode;           // stub return
 }
 
 // create a chat node list
 ChatNodeList* chat_nodes_new(void)
 {
     // create an empty ChatNodeList
-    ChatNodeList nodesList;
+    ChatNodeList* nodesList;
 
     // set first and last values
-    nodesList.first = NULL;
-    nodesList.last = NULL;
+    nodesList->first = NULL;
+    nodesList->last = NULL;
 
     // return the chatNodeList
-    return &nodesList; // stub return
+    return nodesList; // stub return
 }
 
 // adding a chat node
@@ -38,10 +38,10 @@ void chat_nodes_add_node(ChatNodeList* chat_node_list, ChatNode* chat_node)
     ChatNodeListElement* currentNode = chat_node_list->first;
     
     // add new chat node to the ChatNodeList
-    // check if there is already a node in the first spot
+    // check if there is NOT already a node in the first spot
     if(chat_node_list->first == NULL)
     {
-        chat_node_list->first = chat_node;
+        chat_node_list->first->chat_node = *chat_node;
     }
     // else, loop through linked list
     else
@@ -51,10 +51,10 @@ void chat_nodes_add_node(ChatNodeList* chat_node_list, ChatNode* chat_node)
             currentNode = currentNode->next;
         }
         // add the new node to the end of the list
-        currentNode->next = chat_node;
+        currentNode->next->chat_node = *chat_node;
 
         // set the last node to the new node
-        chat_node_list->last = chat_node;
+        chat_node_list->last->chat_node = *chat_node;
 
     }
     // free the temp variable
@@ -72,7 +72,7 @@ int chat_nodes_remove_node(ChatNodeList* chat_node_list, ChatNode* chat_node)
 
 
     // check if the node to remove is at the front
-    if(chat_node_equal(currentNode, chat_node))
+    if(chat_node_equal(&currentNode->chat_node, chat_node))
     {
         // set the currentNode to the second in the list
         currentNode = currentNode->next;
@@ -94,7 +94,7 @@ int chat_nodes_remove_node(ChatNodeList* chat_node_list, ChatNode* chat_node)
     // if not, iterate through the linked list and look for it
     else
     {
-        while(!chat_node_equal(currentNode->next, chat_node) || currentNode == NULL)
+        while(!chat_node_equal(&currentNode->next->chat_node, chat_node) || currentNode == NULL)
         {
             currentNode = currentNode->next;
         }
@@ -146,4 +146,11 @@ bool chat_node_equal(ChatNode* first, ChatNode* second)
 {
     // check if the chat nodes are equal
     return (first->ip == second->ip);
+}
+
+
+int main()
+{
+	return 0;
+
 }
