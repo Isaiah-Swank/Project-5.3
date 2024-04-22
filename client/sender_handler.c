@@ -1,57 +1,31 @@
 #include "sender_handler.h"
 #include "message.h"
 #include <stdio.h>
+#include <string.h>
 
-void handle_input(char *input, struct Client *client) 
-{
-	// send properties file to server
+void *send_to_server(void *arg) {
+    Properties *props = (Properties *)arg;
+    char input[256];
+    int client_socket = setup_client_socket(props->ip, props->port);
 
-        // Check if the input is a JOIN command
-        //If input starts with "JOIN" Then
-          //Extract IP and port from input if necessary
-          //Call send_join_request(client, IP, port)
-        
-        //Check if the input is a LEAVE command
-        //Else If input is "LEAVE" Then
-          //Call send_leave_request(client)
-        
-        // Check if the input is a SHUTDOWN command
-        //Else If input is "SHUTDOWN" Then
-           //Call send_shutdown_request(client)
-           //Set global running flag to false to stop the client application loop
-        
-        //Check if the input is a SHUTDOWN ALL command
-        //Else If input is "SHUTDOWN ALL" Then
-           //Call send_shutdown_all_request(client)
-           //Set global running flag to false to stop the client application loop
+    while (1) {
+        fgets(input, sizeof(input), stdin);
 
-        //If the input is none of the above, treat it as a chat message
-        //Else
-            //Call send_chat_message(client, input)
- return NULL;
-}
-
-void send_request(Client *client, RequestType type) {
-    //switch (type) {
-        //case REQUEST_JOIN:
-            // Implement join request logic here
-         //   break;
-        //case REQUEST_LEAVE:
-            // Implement leave request logic here
-        //    break;
-       // case REQUEST_SHUTDOWN:
-            // Implement shutdown request logic here
-       //     break;
-     //   case REQUEST_SHUTDOWN_ALL:
-            // Implement shutdown all request logic here
-        //    break;
-      //  case REQUEST_NOTE:
-            // Implement sending a note message here
-            // 'message' parameter is used for the note content
-    //        break;
-  //      default:
-            // Handle unknown request type if necessary
-  //          break;
+        if (strncmp(input, "JOIN", 4) == 0) {
+            send_join_request(client_socket, input);
+        } else if (strncmp(input, "LEAVE", 5) == 0) {
+            send_leave_request(client_socket);
+        } else if (strncmp(input, "SHUTDOWN", 8) == 0) {
+            send_shutdown_request(client_socket);
+            break;
+        } else if (strncmp(input, "SHUTDOWN ALL", 13) == 0) {
+            send_shutdown_all_request(client_socket);
+            break;
+        } else {
+            send_note(client_socket, input);
+        }
     }
-return NULL;
+
+    close(client_socket);
+    return NULL;
 }
