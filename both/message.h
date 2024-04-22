@@ -5,6 +5,13 @@
 
 #include "chat_node.h"
 #include "stddef.h"
+#include <unistd.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+
 
 // COMMAND CONSTANTS
 #define JOIN         1
