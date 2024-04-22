@@ -6,7 +6,7 @@
 ChatNode* chat_node_new(unsigned int ip, unsigned int port, char* name)
 {
     // create a new chat node
-    ChatNode* newNode;
+    ChatNode* newNode = (ChatNode*) malloc(sizeof(ChatNode));
 
     // populate the new chat node
     newNode->ip = ip;
@@ -14,14 +14,14 @@ ChatNode* chat_node_new(unsigned int ip, unsigned int port, char* name)
     strcpy(newNode->name, name);
 
     // return the new chat node
-    return newNode;           // stub return
+    return newNode;
 }
 
 // create a chat node list
 ChatNodeList* chat_nodes_new(void)
 {
     // create an empty ChatNodeList
-    ChatNodeList* nodesList;
+    ChatNodeList* nodesList = (ChatNodeList*) malloc(sizeof(ChatNodeList));
 
     // set first and last values
     nodesList->first = NULL;
@@ -35,30 +35,27 @@ ChatNodeList* chat_nodes_new(void)
 void chat_nodes_add_node(ChatNodeList* chat_node_list, ChatNode* chat_node)
 {
     // variables
-    ChatNodeListElement* currentNode = chat_node_list->first;
+    ChatNodeListElement* newElement = (ChatNodeListElement*) malloc(sizeof(ChatNodeListElement));
     
-    // add new chat node to the ChatNodeList
-    // check if there is NOT already a node in the first spot
+    // fill the new chatNode
+    newElement->chat_node = *chat_node;
+    newElement->next = NULL;
+
+    // check if there is NOT already a node in the first AND last spot
     if(chat_node_list->first == NULL)
     {
-        chat_node_list->first->chat_node = *chat_node;
+        chat_node_list->first = newElement;
+        chat_node_list->last = newElement;
     }
-    // else, loop through linked list
+
+    // else, add the new node to the end of the list
     else
     {
-        while(currentNode->next != NULL)
-        {
-            currentNode = currentNode->next;
-        }
-        // add the new node to the end of the list
-        currentNode->next->chat_node = *chat_node;
+        chat_node_list->last->next = newElement;
 
-        // set the last node to the new node
-        chat_node_list->last->chat_node = *chat_node;
-
+        // update the new last in the list
+        chat_node_list->last = newElement;
     }
-    // free the temp variable
-    free(currentNode);
     
 }
 
@@ -68,22 +65,23 @@ int chat_nodes_remove_node(ChatNodeList* chat_node_list, ChatNode* chat_node)
 
     // variables
     ChatNodeListElement* currentNode = chat_node_list->first;
-    ChatNodeListElement* tempNode;
+    ChatNodeListElement* prevNode = NULL;
 
 
     // check if the node to remove is at the front
     if(chat_node_equal(&currentNode->chat_node, chat_node))
     {
         // set the currentNode to the second in the list
-        currentNode = currentNode->next;
+        chat_node_list->first = currentNode->next;
 
-        // free/remove the ndoe
-        free(chat_node_list->first);
+        // check if the list is NULL
+        if(chat_node_list->first == NULL)
+        {
+            // set the last to NULL
+            chat_node_list->last = NULL;
+        }
 
-        // set the new start of the list to the currentNode
-        chat_node_list->first = currentNode;
-
-        // free the temp node
+        // free the current node
         free(currentNode);
 
         // return 1 for success
@@ -94,8 +92,9 @@ int chat_nodes_remove_node(ChatNodeList* chat_node_list, ChatNode* chat_node)
     // if not, iterate through the linked list and look for it
     else
     {
-        while(!chat_node_equal(&currentNode->next->chat_node, chat_node) || currentNode == NULL)
+        while(currentNode != NULL && !chat_node_equal(&currentNode->next->chat_node, chat_node))
         {
+            prevNode = currentNode;
             currentNode = currentNode->next;
         }
         
@@ -105,38 +104,19 @@ int chat_nodes_remove_node(ChatNodeList* chat_node_list, ChatNode* chat_node)
             // return 0 for failure
             return 0;
         }
-        // else (found the node to be removed), check if its the last one
-        else if(currentNode->next->next == NULL)
+        
+        // update the list
+        prevNode->next = currentNode->next;
+        if( currentNode == chat_node_list->last)
         {
-            // remove the node
-            free(currentNode->next);
-
-            // set the last in the list to 
-            chat_node_list->last = currentNode;
-
-            // free the working node
-            free(currentNode);
-
-            // return 1 for success
-            return 1;
+            chat_node_list->last = prevNode;
         }
-        else
-        {
-            // set the temp node to the one after the node to be removed
-            tempNode = currentNode->next->next;
 
-            // free/remove the wanted node
-            free(currentNode->next);
+        // free/remove the chat node
+        free(currentNode);
 
-            // set the next in line of the currentNode to the tempNode
-            currentNode->next = tempNode;
-
-            // free the temp node
-            free(tempNode);
-
-            // return 1 for success
-            return 1;
-        }
+        // return 1 for success
+        return 1;
     }
     
 }
