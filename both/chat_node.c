@@ -149,10 +149,3 @@ bool chat_node_equal(ChatNode* first, ChatNode* second)
     // check if the chat nodes are equal
     return (first->ip == second->ip);
 }
-
-
-int main()
-{
-	return 0;
-
-}
