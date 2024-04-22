@@ -1,39 +1,35 @@
 #include "receiver_handler.h"
 #include "message.h"
+#include <stdio.h>
 
-void receive_messages() 
-{
-    // Server loop: continuously listen for messages
-    // Switch statement to handle different message types
+void *receive_from_server(void *arg) {
+    Properties *props = (Properties *)arg;
+    int client_socket = setup_client_socket(props->ip, props->port);
+    Message message;
 
-        //While client is connected:
-            // Wait for a message from the server
-            
-            // Check if message received successfully
-           // If message is NULL:
-             //   Print error
-            
-            // read message to understand what type it is and content
-            
-            // Handle the message based on its type
-            // Switch messageType:
-            //    Case NOTE:
-                    // Display the note message content to the user
-                    
-                    
-              //  Case JOIN:
-                    // A new user has joined
-                  
-                    
-              //  Case LEAVE:
-                    // A user has left the chat
-                   
-                    
-              //  Case SHUTDOWN:
-                    // The server is shutting down or the client is instructed to shutdown
-                    //initiate client shutdown sequence
-                    
-             //   Default:
-                    // Handle unknown message types or keep alive messages
- return NULL;        
+    while (1) {
+        if (!receive_message(client_socket, &message)) {
+            switch (message.type) {
+                case NOTE:
+                    printf("Note from %s: %s\n", message.sender, message.content);
+                    break;
+                case JOIN:
+                    printf("%s has joined the chat\n", message.sender);
+                    break;
+                case LEAVE:
+                    printf("%s has left the chat\n", message.sender);
+                    break;
+                case SHUTDOWN:
+                    printf("Server is shutting down.\n");
+                    close(client_socket);
+                    return NULL;
+                default:
+                    printf("Received unknown type of message.\n");
+            }
+        } else {
+            fprintf(stderr, "Failed to receive message. Exiting.\n");
+            close(client_socket);
+            return NULL;
+        }
+    }
 }
