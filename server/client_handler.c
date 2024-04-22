@@ -2,104 +2,195 @@
 
 #include "client_handler.h"
 
-void talk_to_client(int command, ChatNode *client) {
+void *talk_to_client(void *arg) {
 
-    switch(command) 
+    int client_socket = *((int *) arg);
+    Message message;
+
+    pthread_mutex_unlock( &mutex_client_socket );
+
+    //read message from client 
+    recieve_message( client_socket, &message);
+    
+    message.chat_node.ip = ntohl(message.chat_node.ip);
+    message.chat_node.port = ntohs(message.chat_node.port);
+
+    //close connection
+    close(client_socket);
+
+    switch(message.type) 
     {
         case JOIN:
-            // Code to handle JOIN command
-                // handle_join function
+            int socket_to_chat_node;
+            struct addrinfo hints, *server_info;
+            char port_string[6];
 
-            // Notify the joining client about successful joining
-                // message function
+            pthread_mutex_lock( &mutex_chat_node_list );
 
+            message.type = 6;   //set type to JOINING
+
+            ChatNodeListElement *current = chat_nodes->first;
+
+            //send joining message to clients
+            while (current->next)
+            {
+                memset(&hints, 0, sizeof(hints));
+                hints.ai_socktype = SOCK_STREAM;
+                hints.ai_family = AF_INET;
+                sprintf(port_string, "%u", current->chat_node.port);
+
+                getaddrinfo(ip_ntop(current->chat_node.ip), port_string, &hints, &server_info);
+
+                socket_to_chat_node = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
+
+                if( connect(socket_to_chat_node, server_info->ai_addr, server_info->ai_addrlen) )
+                {
+                    perror("Error connecting to server!");
+                }
+
+                //send message through socket 
+                send_message( socket_to_chat_node, &message );
+
+                close(socket_to_chat_node);
+                current = current->next;
+            }
+
+            //add new node to chat nodes list
+            chat_nodes_add_node( chat_nodes, &message.chat_node);
+            
+            pthread_mutex_unlock( &mutex_chat_node_list );
             break;
-        case JOINING:
-            // This case is just for internal handling, not triggered directly by client
-            // Notify other clients about the joining client
-                // message function
-            break;
+        
         case LEAVE:
-            // Code to handle LEAVE command
-                // handle_leave function
+        {
+            int socket_to_chat_node;
+            struct addrinfo hints, *server_info;
+            int error;
+            char port_string[6];
 
-            // Notify client they are leaving the chat
-                // message function
+            pthread_mutex_lock( &mutex_chat_node_list );
 
-            // set LEFT command to notify other clients
+            //remove chat node from list
+            chat_nodes_remove_node(chat_nodes, &message.chat_node);
+            
+            message.type = 7;   //set type to LEFT
 
+            ChatNodeListElement *current = chat_nodes->first;
+
+            //send joining message to clients
+            while (current->next)
+            {
+                memset(&hints, 0, sizeof(hints));
+                hints.ai_socktype = SOCK_STREAM;
+                hints.ai_family = AF_INET;
+                sprintf(port_string, "%u", current->chat_node.port);
+
+                getaddrinfo(ip_ntop(current->chat_node.ip), port_string, &hints, &server_info);
+
+                socket_to_chat_node = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
+
+                if( connect(socket_to_chat_node, server_info->ai_addr, server_info->ai_addrlen) )
+                {
+                    perror("Error connecting to server!");
+                }
+
+                //send message through socket 
+                send_message( socket_to_chat_node, &message );
+                
+                close(socket_to_chat_node);
+                current = current->next;
+            }
+            
+            pthread_mutex_unlock( &mutex_chat_node_list );
             break;
-        case LEFT:
-            // This case is just for internal handling, not triggered directly by client
-            // Notify other clients about the leaving client
-                // message function
-
-            break;
-
+        }
         case NOTE:
-            // code to handle sending a note
+        {
+            int socket_to_chat_node;
+            struct addrinfo hints, *server_info;
+            char port_string[6];
+
+            pthread_mutex_lock( &mutex_chat_node_list );
+
+            ChatNodeListElement *current = chat_nodes->first;
+
+            //send message to all clients
+            while (current->next)
+            {
+                //check for sender node
+                if ( chat_node_equal( &(current->chat_node), &(message.chat_node)))
+                {
+                    current = current->next;
+                    continue; 
+                }
+                memset(&hints, 0, sizeof(hints));
+                hints.ai_socktype = SOCK_STREAM;
+                hints.ai_family = AF_INET;
+                sprintf(port_string, "%u", current->chat_node.port);
+
+                getaddrinfo(ip_ntop(current->chat_node.ip), port_string, &hints, &server_info);
+
+                socket_to_chat_node = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
+
+                if( connect(socket_to_chat_node, server_info->ai_addr, server_info->ai_addrlen) )
+                {
+                    perror("Error connecting to server!");
+                }
+
+                //send message through socket 
+                send_message( socket_to_chat_node, &message );
+                
+                close(socket_to_chat_node);
+                current = current->next;
+            }
+            pthread_mutex_unlock( &mutex_chat_node_list );
             break;
-
-        // SHUTDOWN
-        case SHUTDOWN:
-
-            // code to handle SHUTDOWN
-
-            // notify the other clients that this client has left the chat
-
-            break;
+        }
 
         case SHUTDOWN_ALL:
-            // notify all clients of the shutdown
+        {
+            Message *message_ptr = new_message( SHUTDOWN, NULL, NULL );
+            int socket_to_chat_node;
+            struct addrinfo hints, *server_info;
+            char port_string[6];
 
-            // code to handle SHUTDOWN_ALL
+            pthread_mutex_lock( &mutex_chat_node_list );
 
+            ChatNodeListElement *current = chat_nodes->first;
+
+            //send shutdown message to clients
+            while (current->next)
+            {
+                memset(&hints, 0, sizeof(hints));
+                hints.ai_socktype = SOCK_STREAM;
+                hints.ai_family = AF_INET;
+                sprintf(port_string, "%u", current->chat_node.port);
+
+                getaddrinfo(ip_ntop(current->chat_node.ip), port_string, &hints, &server_info);
+
+                socket_to_chat_node = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
+
+                if( connect(socket_to_chat_node, server_info->ai_addr, server_info->ai_addrlen) )
+                {
+                    perror("Error connecting to server!");
+                }
+
+                //send message through socket 
+                send_message( socket_to_chat_node, &message );
+                
+                close(socket_to_chat_node);
+                current = current->next;
+            }
+            
+            pthread_mutex_unlock( &mutex_chat_node_list );
+            exit(EXIT_SUCCESS);
             break;
+        }
 
         // default, if none of these commands, send error message
         default:
-
+            perror("Not a valid message type\n");
             break;
     }
-}
-
-// function that handles the client joining the chat
-void handle_join(int client_socket, ChatNode *node)
-{
-    // add client (ChatNode) to the list of the others (ChatNodes)
-
-}
-
-// function that handles the client leaving the chat (closing the client socket)
-void handle_leave(int client_socket)
-{
-    // remove the client node from the list of participants
-    
-    // Clean up resources for the leaving client
-     
-}
-
-// function that handles the client sending a NOTE
-void handle_note(int client_socket)
-{
-    // send note to all the other clients
-     
-}
-
-// function that handles the client shutting down (only personal)
-void handle_shutdown(int client_socket)
-{
-    // remove the client node from the list of participants
-    
-    // Clean up resources for the leaving client
-     
-}
-
-// function that handles the client shutting down the whole chat room
-void handle_shutdown_all(int client_socket, ChatNodeList client_list)
-{
-    // remove the client node from the list of participants
-    
-    // Clean up resources for the leaving client
-     
+    pthread_exit(NULL);
 }
