@@ -16,7 +16,6 @@ Message* new_message(int type, ChatNode* chat_node_ptr, char* note)
 }
 ssize_t send_message(int socket, Message* message_ptr)
 {
-
     ssize_t bytes_sent;
     
     // send the message to the IP in the socket
@@ -34,10 +33,13 @@ ssize_t send_message(int socket, Message* message_ptr)
 ssize_t recieve_message(int socket, Message* message_ptr)
 {
     int index = 0;
-    size_t bytes_read;
+    ssize_t bytes_read;
+    size_t total_bytes_read = 0;
+
+    size_t buffer_size = sizeof(message_ptr->note) - 1;
 
     // iterate through the message
-    while( index < sizeof(message_ptr->note) - 1)
+    while( index < buffer_size)
     {
         // read the current character
         bytes_read = read(socket, message_ptr->note + index, sizeof(message_ptr->note) - index - 1);
@@ -50,6 +52,8 @@ ssize_t recieve_message(int socket, Message* message_ptr)
             return bytes_read;
         }
 
+        // increment total bytes read
+        total_bytes_read += bytes_read;
         // increment the index
         index += bytes_read;
 
@@ -59,16 +63,13 @@ ssize_t recieve_message(int socket, Message* message_ptr)
             // break off since the message is recieved
             break; 
         }
-
-        // print the new message
-        printf("%s\n", message_ptr->note);
-
-        // return the index
-        return index;
     }
-}
 
-int main()
-{
-	return 0;
+    message_ptr->note[index] = '\0';
+
+    // print the new message
+    printf("%s\n", message_ptr->note);
+
+    // return the index
+    return total_bytes_read;
 }
