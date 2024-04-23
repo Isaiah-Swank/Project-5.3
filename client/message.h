@@ -38,6 +38,6 @@ typedef struct message_struct
 // Function Prototypes
 Message* new_message(int type, ChatNode* chat_node_ptr, char* note);
 ssize_t  send_message(int socket, Message* message_ptr);
-ssize_t  recieve_message(int socket, Message* message_ptr);
+ssize_t  receive_message(int socket, Message* message_ptr);
 
 #endif
