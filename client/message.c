@@ -4,64 +4,72 @@
 
 Message* new_message(int type, ChatNode* chat_node_ptr, char* note)
 {
-    // switch statement checking for Individual or Group Messages
-    switch(type) {
+    Message* new_message = malloc(sizeof(Message));
 
-        // Individual Client JOIN Message
-        case JOIN:
+    // set the new message to the indivdual JOIN message
+    new_message->type = type;
+    new_message->chat_node = *chat_node_ptr;
+    strncpy(new_message->note, note, sizeof(new_message->note) -1);
 
-            break;
-            
-        // Group message "*** is Joining the Chat"
-        case JOINING:
-
-            break;
-        // Individual Client LEAVE Message
-        case LEAVE:
-
-            break;
-        // Group message "*** left the Chat"
-        case LEFT:
- 
-            break;
-
-        // Normal text 'note' being sent
-        case NOTE:
-
-            break;
-
-        // shutdown message to individual client
-        case SHUTDOWN:
-
-            break;
-
-        // shutdown message to ALL clients
-        case SHUTDOWN_ALL:
-
-            break;
-
-        // default, not a valid command
-        default:
-            
-            // send error message
-            break;
-    }
+    // return the new message
+    return new_message;
 }
-size_t send_message(int socket, Message* message_ptr)
+ssize_t send_message(int socket, Message* message_ptr)
 {
-    // enter the socket given in the parameter
-
+    ssize_t bytes_sent;
+    
     // send the message to the IP in the socket
+    bytes_sent = send(socket, message_ptr, sizeof(Message), 0);
 
-    // disconnect from the socket
-    return NULL; // stub return
+    // check if there was an error sending the message
+    if(bytes_sent == -1)
+    {
+        perror("Error sending message");
+    }
+
+    // return the number of bytes sent
+    return bytes_sent;
 }
-size_t recieve_message(int socket, Message* message_ptr)
+ssize_t recieve_message(int socket, Message* message_ptr)
 {
-    // enter the socket given in the parameter
+    int index = 0;
+    ssize_t bytes_read;
+    size_t total_bytes_read = 0;
 
-    // recieve the message from the IP in the socket
+    size_t buffer_size = sizeof(message_ptr->note) - 1;
 
-    // disconnect from the socket
-    return NULL; // stub return
+    // iterate through the message
+    while( index < buffer_size)
+    {
+        // read the current character
+        bytes_read = read(socket, message_ptr->note + index, sizeof(message_ptr->note) - index - 1);
+
+        // check if error reading current byte
+        if(bytes_read <= 0)
+        {
+            // print error message
+            perror("Error reading message");
+            return bytes_read;
+        }
+
+        // increment total bytes read
+        total_bytes_read += bytes_read;
+        // increment the index
+        index += bytes_read;
+
+        // check if at the end of the message
+        if(message_ptr->note[index - 1] == '\0')
+        {
+            // break off since the message is recieved
+            break; 
+        }
+    }
+
+    message_ptr->note[index] = '\0';
+
+    // print the new message
+    printf("%s\n", message_ptr->note);
+
+    // return the index
+    return total_bytes_read;
 }
