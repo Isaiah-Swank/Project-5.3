@@ -51,4 +51,7 @@ int chat_nodes_remove_node(ChatNodeList* chat_node_list, ChatNode* chat_node);
 // compare two chat nodes
 bool chat_node_equal(ChatNode* first, ChatNode* second);
 
+// manage the chat_node_list memory
+void chat_node_free(ChatNodeList* chat_node_list);
+
 #endif
