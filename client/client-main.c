@@ -8,11 +8,11 @@
 int main(int argc, char* argv[])
 {
     pthread_t sender_thread;
-    pthread_t reciever_therad;
-    Properties properties;
+    pthread_t receiver_thread;
+    Properties *properties;
 
     // read the properties
-    char* properties_file = "swank_properties"; // default file
+    char* properties_file = "swank.properties"; // default file
 
     if(argc == 2)
     {
@@ -23,23 +23,23 @@ int main(int argc, char* argv[])
     properties = property_read_properties(properties_file);
 
     // start the sender
-    if(pthread_create(sender_thread, NULL, send_to_server, (void*)properties))
+    if(pthread_create(&sender_thread, NULL, send_to_server, (void*)properties))
     {
         debug("[main] error creating sender thread");
         exit(EXIT_FAILURE);
     }
 
-    // start the reciever
-    if(pthread_create(reciever_thread, NULL, recieve_from_sender, (void*)properties))
+    // start the receiver
+    if(pthread_create(&receiver_thread, NULL, receive_from_server, (void*)properties))
     {
-        debug("[main] error creating reciever thread");
+        debug("[main] error creating receiver thread");
         exit(EXIT_FAILURE);
     }
 
-    // join the reciever thread, which will be disconnected on a SHUTDOWN. aka how to exit
-    if(pthread_join(reciever_thread, NULL))
+    // join the receiver thread, which will be disconnected on a SHUTDOWN. aka how to exit
+    if(pthread_join(receiver_thread, NULL))
     {
-        debug("[main] error joining reciever thread");
+        debug("[main] error joining receiver thread");
         exit(EXIT_FAILURE);
     }
 
