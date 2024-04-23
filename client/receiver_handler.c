@@ -1,9 +1,7 @@
 #include "receiver_handler.h"
-#include "message.h"
-#include <stdio.h>
 
 // Function to set up the client socket
-int setup_client_socket(const char *ip, int port) {
+int rec_setup_client_socket(const char *ip, int port) {
     int sock;
     struct sockaddr_in server_addr;
 
