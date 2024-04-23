@@ -12,5 +12,5 @@
 
 
 void *receive_from_server(void *arg);
-int setup_client_socket(const char *ip, int port);
+int rec_setup_client_socket(const char *ip, int port);
 #endif // RECEIVER_HANDLER_H
