@@ -444,3 +444,219 @@ Question 30
 10 / 10 pts
 In the network layer, "forwarding" is the network-wide process of determining end-to-end paths for packets to take when moving from a source to a destination. In this process, forwarding tables are computed.
   False 
+
+------------------------------
+
+Question 1
+0 / 10 pts
+In the network layer, "routing" is the network-wide process of determining end-to-end paths for packets to take when moving from a source to a destination. In this process, routing tables are computed.
+You Answered
+  True 
+Correct Answer
+  False 
+ 
+Question 2
+10 / 10 pts
+At the link layer, to detect errors, some unavoidable overhead information needs to be added.
+Correct!
+  True 
+  False 
+ 
+Question 3
+10 / 10 pts
+The link layer directly connects two end-to-end hosts.
+  True 
+Correct!
+  False 
+ 
+Question 4
+10 / 10 pts
+Public IP addresses are globally unique.
+Correct!
+  True 
+  False 
+ 
+Question 5
+10 / 10 pts
+With Hot Potato Routing a certain IP prefix is routed to a Next-Hop router on a least cost path.
+Correct!
+  True 
+  False 
+ 
+Question 6
+10 / 10 pts
+The link layer connects nodes, which may be hosts, routers, switches and other link layer devices.
+Correct!
+  True 
+  False 
+ 
+Question 7
+10 / 10 pts
+Per one run of the traceroute utility, potentially many UDP packets may be sent, but only one ICMP message.
+Correct!
+  True 
+  False 
+ 
+Question 8
+10 / 10 pts
+While forward error correction has considerable overhead, there are special applications, like communication to Mars robots, where it is used.
+Correct!
+  True 
+  False 
+ 
+Question 9
+10 / 10 pts
+The difference between CSMA/CD and CSMA is that CSMA doesn't have error detecction.
+  True 
+Correct!
+  False 
+ 
+Question 10
+10 / 10 pts
+In IPv4, the IP header contains two IP addresses, that together are 32 bits long.
+  True 
+Correct!
+  False 
+ 
+Question 11
+10 / 10 pts
+Link layer protocols provide reliability only in environments, where there are high error rates.
+Correct!
+  True 
+  False 
+ 
+Question 12
+10 / 10 pts
+ASs are composed of "internal routers" and "gateway routers".
+Correct!
+  True 
+  False 
+ 
+Question 13
+0 / 10 pts
+ICMP is used for error reporting, e.g. when a host or router cannot be reached.
+Correct Answer
+  True 
+You Answered
+  False 
+ 
+Question 14
+10 / 10 pts
+Broadcast links: assume that a network interface card senses that the medium is open and thus starts sending out a signal. Even then a collision with the signal of another network interface card may occur.
+Correct!
+  True 
+  False 
+ 
+Question 15
+0 / 10 pts
+Broadcast links: Ethernet employs a algorithm called binary exponential backoff to determine the wait time after a collision has occurred.
+Correct Answer
+  True 
+You Answered
+  False 
+ 
+Question 16
+10 / 10 pts
+To correct errors in packets of information, you may either detect the error and retransmit the packets or employ forward error correction.
+Correct!
+  True 
+  False 
+ 
+Question 17
+10 / 10 pts
+Internet check summing is not implemented at the link layer protocols, like Ethernet.
+Correct!
+  True 
+  False 
+ 
+Question 18
+10 / 10 pts
+Internet check summing is as powerful as the cyclic redundency check.
+  True 
+Correct!
+  False 
+ 
+Question 19
+10 / 10 pts
+From the standpoint of an AS, a Next-Hop router is the router beginning a path in a route. That router is located in the same AS.
+  True 
+Correct!
+  False 
+ 
+Question 20
+10 / 10 pts
+The cyclic redundency check can detect bit errors and bursts of bit errors.
+Correct!
+  True 
+  False 
+ 
+Question 21
+10 / 10 pts
+The network layer provides nothing more than a "best effort" service.
+Correct!
+  True 
+  False 
+ 
+Question 22
+0 / 10 pts
+For error detection, the Internet mostly relies on the link layer.
+Correct Answer
+  True 
+You Answered
+  False 
+ 
+Question 23
+10 / 10 pts
+Single bit parity checks can detect any combination of two bit errors.
+  True 
+Correct!
+  False 
+ 
+Question 24
+10 / 10 pts
+The ping service is used to trace the route to a host with a given IP address.
+  True 
+Correct!
+  False 
+ 
+Question 25
+10 / 10 pts
+The network interface card consists of the controller and components that deal with the physical transmissions of signals.
+Correct!
+  True 
+  False 
+ 
+Question 26
+10 / 10 pts
+The traceroute utility is used to trace the route to a host with a given IP address. It is implemented using both UDP as well as ICMP.
+Correct!
+  True 
+  False 
+ 
+Question 27
+10 / 10 pts
+The "Fair" part of "Weighted Fair Queueing" as a scheduling discipline for packet scheduling in a router's output ports means that any packet is going to be scheduled eventually, even if its priority is low.
+Correct!
+  True 
+  False 
+ 
+Question 28
+10 / 10 pts
+The ping service is used to see if a host with a given IP address is reachable. It is implemented by way of UDP messages.
+  True 
+Correct!
+  False 
+ 
+Question 29
+10 / 10 pts
+The problem with Inter-AS routing algorithms is that they don't scale.
+  True 
+Correct!
+  False 
+ 
+Question 30
+10 / 10 pts
+In BGP, when routes need to be eliminated in face of a number of alternative routes, policy decisions take precedence over shortest AS paths and hot potato routing.
+Correct!
+  True 
+  False 
