@@ -26,7 +26,6 @@ You Answered
 Question 4
 10 / 10 pts
 The ping service is used to trace the route to a host with a given IP address.
-  True 
 Correct!
   False 
  
@@ -35,14 +34,12 @@ Question 5
 Packet scheduling in a router's output ports is a consequence of queueing happening in output ports due to too much traffic arriving.
 Correct!
   True 
-  False 
  
 Question 6
 10 / 10 pts
 The ping service is used to see if a host with a given IP address is reachable. It is implemented by way of ICMP messages.
 Correct!
   True 
-  False 
  
 Question 7
 0 / 10 pts
@@ -71,7 +68,6 @@ You Answered
 Question 10
 10 / 10 pts
 Broadcast links: the wait time to try again to transmit a packet after a collision has occurred should be shorter, if the network has a large number of nodes.
-  True 
 Correct!
   False 
  
@@ -94,14 +90,12 @@ Correct Answer
 Question 13
 10 / 10 pts
 In IPv4, if datagrams get fragmented, the Identification field determines the order of the fragments.
-  True 
 Correct!
   False 
  
 Question 14
 10 / 10 pts
 At the link layer, if an error is detected by the network interface card, that means that an error has actually occurred.
-  True 
 Correct!
   False 
  
@@ -134,14 +128,12 @@ Question 18
 The cyclic redundency check as the most powerful error detection technique in the Internet.
 Correct!
   True 
-  False 
  
 Question 19
 10 / 10 pts
 The Internet is a "network of networks". As a consequence, IPv4 addresses have two parts, i.e. a network address part and a host address part.
 Correct!
   True 
-  False 
  
 Question 20
 0 / 10 pts
@@ -156,12 +148,10 @@ Question 21
 Parity checks are a simple, but weak way of detecting or even correcting bit errors.
 Correct!
   True 
-  False 
  
 Question 22
 10 / 10 pts
 The ping service is used to see if a host with a given IP address is reachable. It is implemented by way of UDP messages.
-  True 
 Correct!
   False 
  
@@ -186,7 +176,6 @@ Question 25
 ASs are addressed using ASNs (autonomous system numbers).
 Correct!
   True 
-  False 
  
 Question 26
 0 / 10 pts
@@ -209,7 +198,6 @@ Question 28
 The cyclic redundency check can detect bit errors and bursts of bit errors.
 Correct!
   True 
-  False 
  
 Question 29
 0 / 10 pts
@@ -222,6 +210,5 @@ You Answered
 Question 30
 10 / 10 pts
 The lookup of IP address prefixes in forwarding tables works according to "rightmost longest matching".
-  True 
 Correct!
   False 
