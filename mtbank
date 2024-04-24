@@ -256,3 +256,191 @@ The lookup of IP address prefixes in forwarding tables works according to "leftm
 Question 30
 Broadcast links: assume that a network interface card senses that the medium is open and thus starts sending out a signal. Even then a collision with the signal of another network interface card may occur.
   True 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Question 1
+0 / 10 pts
+Per one run of the traceroute utility, potentially many UDP packets may be sent, but only one ICMP message.
+Correct Answer
+  True 
+
+ 
+Question 2
+10 / 10 pts
+Internet check summing is not implemented at the link layer protocols, like Ethernet.
+Correct!
+  True 
+   
+ 
+Question 3
+10 / 10 pts
+Public IP addresses are globally unique.
+  True 
+ 
+Question 4
+0 / 10 pts
+The cyclic redundency check as the most powerful error detection technique in the Internet.
+Correct Answer
+  True 
+
+ 
+Question 5
+10 / 10 pts
+Within an AS, different Intra-AS routing algorithm may be run.
+  False 
+ 
+Question 6
+10 / 10 pts
+BGP has two parts, i.e. eBGP (external BGP) and lBGP (local BGP).
+
+  False 
+ 
+Question 7
+10 / 10 pts
+The problem with Inter-AS routing algorithms is that they don't scale.
+
+  False 
+ 
+Question 8
+0 / 10 pts
+For broadcast links at the link layer, CSMA/CD has similarities with TDM - we may call the former "statistical TDM".
+Correct Answer
+  True 
+
+ 
+Question 9
+10 / 10 pts
+In IPv4, if datagrams get fragmented, the Fragment Offset field determines the order of the fragments.
+Correct!
+  True 
+
+ 
+Question 10
+10 / 10 pts
+The traceroute utility is used to trace the route to a host with a given IP address. All messages sent are ICMP messages.
+
+  False 
+ 
+Question 11
+10 / 10 pts
+At the link layer, if an error is detected, that does not necessarily mean that an error has actually occurred.
+Correct!
+  True 
+   
+ 
+Question 12
+0 / 10 pts
+Intra-AS routing is routing between networks in the sense of IP-defined networks.
+Correct Answer
+True
+ 
+Question 13
+10 / 10 pts
+The difference between CSMA/CD and CSMA is that CSMA doesn't have error detecction.
+
+  False 
+ 
+Question 14
+10 / 10 pts
+In BGP, when routes need to be eliminated in face of a number of alternative routes, hot potato routing takes precedence over shortest AS paths.
+
+  False 
+ 
+Question 15
+10 / 10 pts
+Internet check summing is as powerful as the cyclic redundency check.
+
+  False 
+ 
+Question 16
+10 / 10 pts
+For broadcast links, if a collision has occurred, the only way to deal with the situation is to abort transmission.
+Correct!
+  True 
+ 
+Question 17
+10 / 10 pts
+The cyclic redundency check can detect bit errors, bursts of bit errors and detect some bit errors.
+  False 
+ 
+Question 18
+10 / 10 pts
+The network layer service model provides for guaranteed in-order packet delivery.
+  False 
+ 
+Question 19
+10 / 10 pts
+Broadcast links: if a collision has occurred and the transmission has been aborted, participants wait a random amount of time until they try again.
+Correct!
+  True  
+ 
+Question 20
+10 / 10 pts
+Inter-AS routing is routing between networks in the sense of IP-defined networks.
+  False 
+ 
+Question 21
+10 / 10 pts
+In routers, the switch fabric is arguably the most important part, as it transfers packets from the router's input links to its output links.
+Correct!
+  True 
+ 
+Question 22
+0 / 10 pts
+From the standpoint of an AS, a Next-Hop router is the router beginning a path in a route. That router is located in an adjacent/neighboring AS
+Correct Answer
+  True 
+ 
+Question 23
+10 / 10 pts
+A router's forwarding table maps IP address prefixes to output ports.
+
+  True 
+ 
+Question 24
+0 / 10 pts
+With Hot Potato Routing a certain IP prefix is routed to a Next-Hop router on a least cost path.
+True 
+ 
+Question 25
+10 / 10 pts
+The head-of-line blocking in a router's input port is a phenomenon that occurs when a packet destined for some congested output port blocks a packet behind it that is detined for the same output port.
+  False 
+ 
+Question 26
+10 / 10 pts
+ It is the link layer that deals with the "physicality" of the Internet.
+  True 
+ 
+Question 27
+10 / 10 pts
+In the network layer, because of the long timescale, the Control Plane is implemented in software.
+  True 
+ 
+Question 28
+10 / 10 pts
+With Hot Potato Routing a certain IP prefix is routed to a First-Hop router on a least cost path.
+  False 
+ 
+Question 29
+10 / 10 pts
+The main goal of Inter-AS routing algorithms is to obtain routes with the least number of hops.
+  False 
+ 
+Question 30
+10 / 10 pts
+In the network layer, "forwarding" is the network-wide process of determining end-to-end paths for packets to take when moving from a source to a destination. In this process, forwarding tables are computed.
+  False 
