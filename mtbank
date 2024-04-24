@@ -1,214 +1,127 @@
-Niles mt
+
 Question 1
-0 / 10 pts
 Single bit parity checks can detect single bit errors, but only in the data bits.
-You Answered
-  True 
-Correct Answer
   False 
  
 Question 2
-0 / 10 pts
 The "Fair" part of "Weighted Fair Queueing" as a scheduling discipline for packet scheduling in a router's output ports means that any packet is going to be scheduled eventually, even if its priority is low.
-Correct Answer
   True 
-You Answered
-  False 
+
  
 Question 3
-0 / 10 pts
 At the link layer, to (forward-)correct errors, the cost in terms of overhead information is higher, compared to error detection.
-Correct Answer
   True 
-You Answered
-  False 
+
  
 Question 4
-10 / 10 pts
 The ping service is used to trace the route to a host with a given IP address.
-Correct!
   False 
  
 Question 5
-10 / 10 pts
 Packet scheduling in a router's output ports is a consequence of queueing happening in output ports due to too much traffic arriving.
-Correct!
   True 
  
 Question 6
-10 / 10 pts
 The ping service is used to see if a host with a given IP address is reachable. It is implemented by way of ICMP messages.
-Correct!
   True 
  
 Question 7
-0 / 10 pts
  It is the link layer that deals with the "physicality" of the Internet.
-Correct Answer
   True 
-You Answered
-  False 
  
 Question 8
-0 / 10 pts
 For broadcast links, if a collision has occurred, the only way to deal with the situation is to abort transmission.
-Correct Answer
   True 
-You Answered
-  False 
  
 Question 9
-0 / 10 pts
 The head-of-line blocking in a router's input port is a phenomenon that occurs when a packet destined for some congested output port blocks a packet behind it that is detined for different output port.
-Correct Answer
   True 
-You Answered
-  False 
+
  
 Question 10
-10 / 10 pts
 Broadcast links: the wait time to try again to transmit a packet after a collision has occurred should be shorter, if the network has a large number of nodes.
-Correct!
   False 
  
 Question 11
-0 / 10 pts
 In general, public IP addresses relate to certain physical locations.
-Correct Answer
   True 
-You Answered
-  False 
+
  
 Question 12
-0 / 10 pts
 The length of burst errors that can be detected by the cyclic redundency check may slightly exceed the length of its "generator polynomial".
-You Answered
-  True 
-Correct Answer
   False 
  
 Question 13
-10 / 10 pts
 In IPv4, if datagrams get fragmented, the Identification field determines the order of the fragments.
-Correct!
   False 
  
 Question 14
-10 / 10 pts
 At the link layer, if an error is detected by the network interface card, that means that an error has actually occurred.
-Correct!
   False 
  
 Question 15
-0 / 10 pts
 ICMP is used for error reporting, e.g. when a host or switch cannot be reached.
-You Answered
-  True 
-Correct Answer
   False 
  
 Question 16
-0 / 10 pts
 Link layer protocols provide reliability only in environments, where there are high error rates.
-Correct Answer
   True 
-You Answered
-  False 
+
  
 Question 17
-0 / 10 pts
 With Hot Potato Routing a certain IP prefix is routed to a First-Hop router on a least cost path.
-You Answered
-  True 
-Correct Answer
   False 
  
 Question 18
-10 / 10 pts
 The cyclic redundency check as the most powerful error detection technique in the Internet.
-Correct!
   True 
  
 Question 19
-10 / 10 pts
 The Internet is a "network of networks". As a consequence, IPv4 addresses have two parts, i.e. a network address part and a host address part.
-Correct!
   True 
  
 Question 20
-0 / 10 pts
 In IPv4, the IP header contains a "Protocol" field that contains a reference to the protocol that is "below" IP, i.e. some link layer protocol like Ethernet.
-You Answered
-  True 
-Correct Answer
   False 
  
 Question 21
-10 / 10 pts
 Parity checks are a simple, but weak way of detecting or even correcting bit errors.
-Correct!
   True 
  
 Question 22
-10 / 10 pts
 The ping service is used to see if a host with a given IP address is reachable. It is implemented by way of UDP messages.
-Correct!
   False 
  
 Question 23
-0 / 10 pts
 Within an AS, only one Intra-AS routing algorithm is run.
-Correct Answer
   True 
-You Answered
-  False 
  
 Question 24
-0 / 10 pts
 Per one run of the traceroute utility, potentially many UDP packets may be sent, but only one ICMP message.
-Correct Answer
   True 
-You Answered
-  False 
+
  
 Question 25
-10 / 10 pts
 ASs are addressed using ASNs (autonomous system numbers).
-Correct!
   True 
  
 Question 26
-0 / 10 pts
 In the network layer, because of the long timescale, the Control Plane is implemented in software.
-Correct Answer
   True 
-You Answered
-  False 
  
 Question 27
-0 / 10 pts
 Inter-AS routing is routing between networks in the sense of IP-defined networks.
-You Answered
-  True 
-Correct Answer
   False 
  
 Question 28
-10 / 10 pts
 The cyclic redundency check can detect bit errors and bursts of bit errors.
-Correct!
   True 
  
 Question 29
-0 / 10 pts
 The most popular scheduling discipline for packet scheduling in a router's output ports is Weighted Fair Queueing.
-Correct Answer
   True 
-You Answered
-  False 
+
  
 Question 30
-10 / 10 pts
 The lookup of IP address prefixes in forwarding tables works according to "rightmost longest matching".
-Correct!
   False 
