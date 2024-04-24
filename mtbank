@@ -125,3 +125,134 @@ The most popular scheduling discipline for packet scheduling in a router's outpu
 Question 30
 The lookup of IP address prefixes in forwarding tables works according to "rightmost longest matching".
   False 
+-----------------------------------------------------------------------------------------------------------
+Question 1
+The link layer is implemented in the network interface card as well as in software (mostly at the operating system level).
+
+  True 
+
+Question 2
+The network interface card consists of the controller and components that deal with the physical transmissions of signals.
+  True 
+ 
+Question 3
+With Hot Potato Routing a certain IP prefix is routed to a Next-Hop router on a least cost path.
+  True 
+
+Question 4
+In IPv4, if a datagram gets fragmented, it gets reassembled at the next hop router, i.e. the one that comes right after the router that fragmented the datagram.
+  False 
+ 
+Question 5
+Single bit parity checks can detect any combination of two bit errors.
+  False 
+ 
+Question 6
+Internet check summing is not implemented at the link layer protocols, like Ethernet.
+  True 
+ 
+Question 7
+ASs are addressed using IP addresses.
+  False 
+ 
+Question 8
+The cyclic redundency check as the most powerful error detection technique in the Internet.
+  True 
+ 
+Question 9
+The Internet is a "network of networks". As a consequence, IPv4 addresses have two parts, i.e. a network address part and a host address part.
+  True 
+ 
+Question 10
+Link layer protocols provide reliability only in environments, where there are high error rates.
+  True 
+ 
+Question 11
+Broadcast links: Ethernet employs a algorithm called "linear exponential backoff" to determine the wait time after a collision has occurred.
+  False 
+ 
+Question 12
+At the link layer, to (forward-)correct errors, the cost in terms of overhead information is higher, compared to error detection.
+Correct!
+  True 
+ 
+Question 13
+The link layer allows for "piecing together" and end-toend path by potentially many individual links.
+Correct!
+  True 
+ 
+Question 14
+A router's forwarding table maps IP address postfixes to output ports.
+  False 
+ 
+Question 15
+IP addresses are associated with network interfaces. That means that routers have to have several IP addresses.
+Correct!
+  True 
+ 
+Question 16
+The problem with Inter-AS routing algorithm is that they don't take into account adminstrative autonomy of ISPs.
+  True 
+ 
+Question 17
+Two-dimentional parity checks can detect any combination of two bit errors.
+Correct!
+  True  
+ 
+Question 18
+To correct errors in packets of information, you may either detect the error and retransmit the packets or employ forward error correction.
+Correct!
+  True 
+ 
+Question 19
+The network layer provides nothing more than a "best effort" service.
+Correct!
+  True 
+ 
+Question 20
+The ping service is used to see if a host with a given IP address is reachable. It is implemented by way of ICMP messages.
+Correct!
+  True  
+ 
+Question 21
+While forward error correction has considerable overhead, there are special applications, like communication to Mars robots, where it is used.
+Correct!
+  True 
+ 
+Question 22
+Intra-AS routing is routing between networks in the sense of IP-defined networks.
+  True 
+ 
+Question 23
+The problem with Intra-AS routing algorithm is that they don't take into account adminstrative autonomy of ISPs.
+  False 
+ 
+Question 24
+In the network layer, "forwarding" is the router-local action of transferring packets from a router's input links to its output links, based on entries of its forwarding table.
+  True 
+ 
+Question 25
+In IPv4, the IP header contains two IP addresses, that together are 64 bits long.
+  True 
+ 
+Question 26
+For broadcast links at the link layer, CSMA/CD has similarities with TDM - we may call the former "statistical TDM".
+Correct!
+  True 
+ 
+Question 27
+In IPv4, if datagrams get fragmented, the Identification field determines the order of the fragments.
+  False 
+ 
+Question 28
+In the network layer, because of the long timescale, the Control Plane is implemented in software.
+Correct!
+  True 
+ 
+Question 29
+The lookup of IP address prefixes in forwarding tables works according to "leftmost longest matching".
+  True 
+ 
+Question 30
+Broadcast links: assume that a network interface card senses that the medium is open and thus starts sending out a signal. Even then a collision with the signal of another network interface card may occur.
+  True 
