@@ -9,67 +9,85 @@ Message* new_message(int type, ChatNode* chat_node_ptr, char* note)
     // set the new message to the indivdual JOIN message
     new_message->type = type;
     new_message->chat_node = *chat_node_ptr;
+    printf("%d\n", new_message->chat_node.ip);
     strncpy(new_message->note, note, sizeof(new_message->note) -1);
 
     // return the new message
     return new_message;
 }
-ssize_t send_message(int socket, Message* message_ptr)
-{
-    ssize_t bytes_sent;
-    
-    // send the message to the IP in the socket
-    bytes_sent = send(socket, message_ptr, sizeof(Message), 0);
 
-    // check if there was an error sending the message
-    if(bytes_sent == -1)
-    {
-        perror("Error sending message");
+
+
+
+ssize_t send_message(int socket, Message* message_ptr) {
+    ssize_t bytes_sent = 0;
+    ssize_t total_bytes_sent = 0;
+
+    message_ptr->chat_node.ip = htonl(message_ptr->chat_node.ip);
+
+    // Send the message type
+    bytes_sent = send(socket, &message_ptr->type, sizeof(unsigned char), 0);
+    if (bytes_sent == -1) {
+        perror("Error sending message type");
+        return -1;  // Return immediately if there's an error
     }
+    total_bytes_sent += bytes_sent;
 
-    // return the number of bytes sent
-    return bytes_sent;
+    // Send the ChatNode structure
+    bytes_sent = send(socket, &message_ptr->chat_node, sizeof(ChatNode), 0);
+    if (bytes_sent == -1) {
+        perror("Error sending ChatNode");
+        return -1;  // Return immediately if there's an error
+    }
+    total_bytes_sent += bytes_sent;
+
+    // Send the Note structure
+    bytes_sent = send(socket, &message_ptr->note, sizeof(Note), 0);
+    if (bytes_sent == -1) {
+        perror("Error sending Note");
+        return -1;  // Return immediately if there's an error
+    }
+    total_bytes_sent += bytes_sent;
+
+    // Return the total number of bytes sent
+    return total_bytes_sent;
 }
+
+
 ssize_t recieve_message(int socket, Message* message_ptr)
 {
-    int index = 0;
+    // int index = 0;
     ssize_t bytes_read;
-    size_t total_bytes_read = 0;
+    // size_t total_bytes_read = 0;
 
-    size_t buffer_size = sizeof(message_ptr->note) - 1;
-
-    // iterate through the message
-    while( index < buffer_size)
+    
+    // size_t buffer_size = sizeof(message_ptr->note) - 1;
+    
+    bytes_read = read(socket, &message_ptr->type, sizeof(unsigned char));
+    if(bytes_read == -1)
     {
-        // read the current character
-        bytes_read = read(socket, message_ptr->note + index, sizeof(message_ptr->note) - index - 1);
+    	perror("Error reading message type (received_message)");
+    	return -1;
+    }
+    
+    bytes_read = read(socket, &message_ptr->chat_node, sizeof(ChatNode));
+    if(bytes_read == -1)
+    {
+    	perror("Error reading chat node (recieve_message)");
+    	return -1;
+    }
+    
+    // read the note
+    bytes_read = read(socket, &message_ptr->note, sizeof(Note));
 
-        // check if error reading current byte
-        if(bytes_read <= 0)
-        {
-            // print error message
-            perror("Error reading message");
-            return bytes_read;
-        }
-
-        // increment total bytes read
-        total_bytes_read += bytes_read;
-        // increment the index
-        index += bytes_read;
-
-        // check if at the end of the message
-        if(message_ptr->note[index - 1] == '\0')
-        {
-            // break off since the message is recieved
-            break; 
-        }
+    // check if error reading current byte
+    if(bytes_read == -1)
+    {
+      // print error message
+      perror("Error reading message");
+      return -1;
     }
 
-    message_ptr->note[index] = '\0';
-
-    // print the new message
-    printf("%s\n", message_ptr->note);
-
     // return the index
-    return total_bytes_read;
+    return bytes_read;
 }
