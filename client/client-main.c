@@ -2,11 +2,15 @@
 
 #define DBG
 #include "dbg.h"
+#include <signal.h>
 
 #include "client-main.h"
 
 int main(int argc, char* argv[])
 {
+
+    signal(SIGPIPE, SIG_IGN);
+
     pthread_t sender_thread;
     pthread_t receiver_thread;
     Properties *properties;
