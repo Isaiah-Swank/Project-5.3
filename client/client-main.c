@@ -2,11 +2,15 @@
 
 #define DBG
 #include "dbg.h"
+#include <signal.h>
 
 #include "client-main.h"
 
 int main(int argc, char* argv[])
 {
+
+    signal(SIGPIPE, SIG_IGN);
+
     pthread_t sender_thread;
     pthread_t receiver_thread;
     Properties *properties;
@@ -38,7 +42,6 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-     printf("the problem is not reciever_handler");
  
     // join the receiver thread, which will be disconnected on a SHUTDOWN. aka how to exit
     if(pthread_join(receiver_thread, NULL))
