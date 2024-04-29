@@ -15,40 +15,45 @@ Message* new_message(int type, ChatNode* chat_node_ptr, char* note)
     // return the new message
     return new_message;
 }
-ssize_t send_message(int socket, Message* message_ptr)
-{
-    ssize_t bytes_sent;
+
+
+
+
+ssize_t send_message(int socket, Message* message_ptr) {
+    ssize_t bytes_sent = 0;
+    ssize_t total_bytes_sent = 0;
+
     message_ptr->chat_node.ip = htonl(message_ptr->chat_node.ip);
-    
-    // send the message to the IP in the socket
+
+    // Send the message type
     bytes_sent = send(socket, &message_ptr->type, sizeof(unsigned char), 0);
-
-    // check if there was an error sending the message
-    if(bytes_sent == -1)
-    {
-        perror("Error sending message");
+    if (bytes_sent == -1) {
+        perror("Error sending message type");
+        return -1;  // Return immediately if there's an error
     }
-    
+    total_bytes_sent += bytes_sent;
+
+    // Send the ChatNode structure
     bytes_sent = send(socket, &message_ptr->chat_node, sizeof(ChatNode), 0);
-
-    // check if there was an error sending the message
-    if(bytes_sent == -1)
-    {
-        perror("Error sending message");
+    if (bytes_sent == -1) {
+        perror("Error sending ChatNode");
+        return -1;  // Return immediately if there's an error
     }
-    
-    
+    total_bytes_sent += bytes_sent;
+
+    // Send the Note structure
     bytes_sent = send(socket, &message_ptr->note, sizeof(Note), 0);
-
-    // check if there was an error sending the message
-    if(bytes_sent == -1)
-    {
-        perror("Error sending message");
+    if (bytes_sent == -1) {
+        perror("Error sending Note");
+        return -1;  // Return immediately if there's an error
     }
+    total_bytes_sent += bytes_sent;
 
-    // return the number of bytes sent
-    return bytes_sent;
+    // Return the total number of bytes sent
+    return total_bytes_sent;
 }
+
+
 ssize_t recieve_message(int socket, Message* message_ptr)
 {
     // int index = 0;
