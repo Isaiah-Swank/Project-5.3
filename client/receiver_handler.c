@@ -3,7 +3,7 @@
 // Function to set up the client socket
 int rec_setup_client_socket(const char *ip, int port)
 {
-    int server_socket;
+    int server_socket = 0;
 
     //write the proper code to connect to the socket created in the do while in client_handler.c 
     //avoid possible issues with using same address - mutex locks maybe?
@@ -37,21 +37,6 @@ printf("calls to rec setup client\n");
     {
         fprintf(stderr, "Failed to set up client socket.\n");
         return NULL;
-    }
-
-    // Listen for incoming connections
-    if (listen(client_socket, BACKLOG) == -1) {
-        perror("listen");
-        close(client_socket);
-        return 1;
-    }
-
-    // Accept incoming connections
-    client_addr_len = sizeof(client_addr);
-    if (accept(client_socket, (struct sockaddr *)&client_addr, &client_addr_len) == -1) {
-        perror("accept");
-        close(client_socket);
-        return 1;
     }
 
     while (1)
