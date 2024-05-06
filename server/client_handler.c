@@ -1,67 +1,7 @@
 // client_handler.c
 
 #include "client_handler.h"
-#include <errno.h>
-void *talk_to_client(void *arg) {
-    if (!arg) {
-        fprintf(stderr, "Error: NULL pointer received in talk_to_client\n");
-        return NULL;
-    }
 
-    int client_socket = *((int *) arg);
-    free(arg);  // Free the dynamically allocated socket descriptor
-    arg = NULL;  // Prevent use after free
-
-    pthread_mutex_unlock(&mutex_client_socket);
-
-    Message message;
-    while (recieve_message(client_socket, &message) > 0) {  // Keep receiving messages
-        message.chat_node.ip = ntohl(message.chat_node.ip);
-        message.chat_node.port = ntohs(message.chat_node.port);
-
-        printf("%d, %s, %s\n", message.type, message.chat_node.name, message.note);
-        printf("%d, %d, %s\n", message.chat_node.ip, message.chat_node.port, message.chat_node.name);
-
-        switch (message.type) {
-            case JOIN:
-                message.type = JOINING;  // Modify the message type if necessary
-                printf("Client %s has joined.\n", message.chat_node.name);
-                // Here you could add the chat node to a list or similar structure if needed
-                break;
-            case LEAVE:
-                printf("Client %s has left the chat.\n", message.chat_node.name);
-                close(client_socket);  // Close the connection on LEAVE
-                return NULL;  // Exit the thread function
-            case SHUTDOWN:
-            case SHUTDOWN_ALL:
-                printf("Shutting down server or client as requested by %s.\n", message.chat_node.name);
-                close(client_socket);  // Close the connection on SHUTDOWN
-                return NULL;  // Exit the thread function
-            case NOTE:
-                printf("Note from %s: %s\n", message.chat_node.name, message.note);
-                // Implement what should happen on NOTE, like logging the note or displaying it
-                break;
-            default:
-                fprintf(stderr, "Unknown message type received: %d\n", message.type);
-                break;
-        }
-    }
-
-    if (errno == ECONNRESET || errno == ETIMEDOUT) {
-        perror("Connection reset by peer or timeout");
-    } else {
-        perror("Failed to receive message or connection closed");
-    }
-    
-    close(client_socket);  // Ensure the socket is closed if we exit the loop
-    return NULL;
-}
-
-
-
-
-
-/*
 void *talk_to_client(void *arg) {
 
     int client_socket = *((int *) arg);
@@ -269,4 +209,3 @@ void *talk_to_client(void *arg) {
     pthread_exit(NULL);
     printf("%ld\n", received_message);
 }
-*/
