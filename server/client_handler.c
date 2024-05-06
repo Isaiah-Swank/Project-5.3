@@ -1,211 +1,109 @@
 // client_handler.c
 
 #include "client_handler.h"
+#include <errno.h>
+
+static int client_sockets[100];  // array to hold client sockets
+static int num_clients = 0;
+static pthread_mutex_t clients_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+//add client for socket array
+void add_client(int client_sock) {
+    pthread_mutex_lock(&clients_mutex);
+    if (num_clients < 100) {
+        client_sockets[num_clients++] = client_sock;
+    }
+    pthread_mutex_unlock(&clients_mutex);
+}
+
+//remove client for socket array
+void remove_client(int client_sock) {
+    pthread_mutex_lock(&clients_mutex);
+    for (int i = 0; i < num_clients; i++) {
+        if (client_sockets[i] == client_sock) {   //if we are removing current
+            client_sockets[i] = client_sockets[--num_clients];  // Move last to current
+            break;
+        }
+    }
+    pthread_mutex_unlock(&clients_mutex);
+}
+
+
+
+void broadcast_message(const Message *msg, int sender_sock) {
+    pthread_mutex_lock(&clients_mutex);
+
+    //loop through client array
+    for (int i = 0; i < num_clients; i++) {
+        if (client_sockets[i] != sender_sock) {  // Do not send back to the sender
+            //send message to current client
+            if (send(client_sockets[i], msg, sizeof(*msg), 0) < 0) {
+                perror("Failed to send message to client");
+            }
+        }
+    }
+    pthread_mutex_unlock(&clients_mutex);
+}
 
 void *talk_to_client(void *arg) {
+    if (!arg) {
+        fprintf(stderr, "Error: NULL pointer received in talk_to_client\n");
+        return NULL;
+    }
 
     int client_socket = *((int *) arg);
+    free(arg);  // Free the dynamically allocated socket descriptor
+    arg = NULL;  // Prevent use after free
+
+    pthread_mutex_unlock(&mutex_client_socket);
+    add_client(client_socket);  // Add the client to the list when connection is established
+
     Message message;
 
-    pthread_mutex_unlock( &mutex_client_socket );
+    //continually receive message but only do stuff it is real message
+    while (recieve_message(client_socket, &message) > 0) {
 
-    //read message from client 
-    ssize_t received_message = recieve_message( client_socket, &message);
-    
-    message.chat_node.ip = ntohl(message.chat_node.ip);
-    message.chat_node.port = ntohs(message.chat_node.port);
-    
-    printf("%d, %s, %s\n", message.type, message.chat_node.name, message.note);
-    printf("%d, %d, %s\n", message.chat_node.ip, message.chat_node.port, message.chat_node.name);
-    
+        //convert ip and port back to host
+        message.chat_node.ip = ntohl(message.chat_node.ip);
+        message.chat_node.port = ntohs(message.chat_node.port);
 
-
-    //close connection
-    close(client_socket);
-
-    switch(message.type) 
-    {
-        case JOIN:
-            int socket_to_chat_node;
-            struct addrinfo hints, *server_info;
-            char port_string[6];
-            char ip_string[INET_ADDRSTRLEN];
-
-            pthread_mutex_lock( &mutex_chat_node_list );
-
-            message.type = JOINING;   //set type to JOINING
-
-            ChatNodeListElement *current = chat_nodes->first;
-
-            //send joining message to clients
-            while (current->next)
-            {
-                memset(&hints, 0, sizeof(hints));
-                hints.ai_socktype = SOCK_STREAM;
-                hints.ai_family = AF_INET;
-                sprintf(port_string, "%u", current->chat_node.port);
-                
-                inet_ntop(AF_INET, &(current->chat_node.ip), ip_string, INET_ADDRSTRLEN);
-
-                getaddrinfo(ip_string, port_string, &hints, &server_info);
-
-                socket_to_chat_node = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
-
-                if( connect(socket_to_chat_node, server_info->ai_addr, server_info->ai_addrlen) )
-                {
-                    perror("Error connecting to server!");
-                }
-
-                //send message through socket 
-                send_message( socket_to_chat_node, &message );
-
-                close(socket_to_chat_node);
-                current = current->next;
-            }
-
-            //add new node to chat nodes list
-            chat_nodes_add_node( chat_nodes, &message.chat_node);
-            
-            pthread_mutex_unlock( &mutex_chat_node_list );
-            break;
-        
-        case LEAVE:
-        {
-            int socket_to_chat_node;
-            struct addrinfo hints, *server_info;
-            char port_string[6];
-
-            pthread_mutex_lock( &mutex_chat_node_list );
-
-            //remove chat node from list
-            chat_nodes_remove_node(chat_nodes, &message.chat_node);
-            
-            message.type = LEFT;   //set type to LEFT
-
-            ChatNodeListElement *current = chat_nodes->first;
-
-            //send joining message to clients
-            while (current->next)
-            {
-                memset(&hints, 0, sizeof(hints));
-                hints.ai_socktype = SOCK_STREAM;
-                hints.ai_family = AF_INET;
-                sprintf(port_string, "%u", current->chat_node.port);
-                
-                inet_ntop(AF_INET, &(current->chat_node.ip), ip_string, INET_ADDRSTRLEN);
-
-                getaddrinfo(ip_string, port_string, &hints, &server_info);
-
-                socket_to_chat_node = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
-
-                if( connect(socket_to_chat_node, server_info->ai_addr, server_info->ai_addrlen) )
-                {
-                    perror("Error connecting to server!");
-                }
-
-                //send message through socket 
-                send_message( socket_to_chat_node, &message );
-                
-                close(socket_to_chat_node);
-                current = current->next;
-            }
-            
-            pthread_mutex_unlock( &mutex_chat_node_list );
-            break;
+        switch (message.type) {
+            case JOIN:
+                message.type = JOINING;  // Modify the message type if necessary
+                printf("Client %s has joined.\n", message.chat_node.name);
+                // Broadcast joining message
+                broadcast_message(&message, client_socket);
+                break;
+            case LEAVE:
+                printf("Client %s has left the chat.\n", message.chat_node.name);
+                broadcast_message(&message, client_socket);  // Optionally notify others of the departure
+                close(client_socket);  // Close the connection on LEAVE
+                remove_client(client_socket);  // Remove client from list
+                return NULL;  // Exit the thread function
+            case SHUTDOWN:
+                break;
+            case SHUTDOWN_ALL:
+                printf("Shutting down server or client as requested by %s.\n", message.chat_node.name);
+                close(client_socket);  // Close the connection on SHUTDOWN
+                remove_client(client_socket);  // Remove client from list
+                return NULL;  // Exit the thread function
+            case NOTE:
+                printf("Note from %s: %s\n", message.chat_node.name, message.note);
+                broadcast_message(&message, client_socket);  // Broadcast note to all other clients
+                break;
+            default:
+                fprintf(stderr, "Unknown message type received: %d\n", message.type);
+                break;
         }
-        case NOTE:
-        {
-            int socket_to_chat_node;
-            struct addrinfo hints, *server_info;
-            char port_string[6];
-
-            pthread_mutex_lock( &mutex_chat_node_list );
-
-            ChatNodeListElement *current = chat_nodes->first;
-
-            //send message to all clients
-            while (current->next)
-            {
-                //check for sender node
-                if ( chat_node_equal( &(current->chat_node), &(message.chat_node)))
-                {
-                    current = current->next;
-                    continue; 
-                }
-                memset(&hints, 0, sizeof(hints));
-                hints.ai_socktype = SOCK_STREAM;
-                hints.ai_family = AF_INET;
-                sprintf(port_string, "%u", current->chat_node.port);
-
-                inet_ntop(AF_INET, &(current->chat_node.ip), ip_string, INET_ADDRSTRLEN);
-
-                getaddrinfo(ip_string, port_string, &hints, &server_info);
-
-                socket_to_chat_node = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
-
-                if( connect(socket_to_chat_node, server_info->ai_addr, server_info->ai_addrlen) )
-                {
-                    perror("Error connecting to server!");
-                }
-
-                //send message through socket 
-                send_message( socket_to_chat_node, &message );
-                
-                close(socket_to_chat_node);
-                current = current->next;
-            }
-            pthread_mutex_unlock( &mutex_chat_node_list );
-            break;
-        }
-
-        case SHUTDOWN_ALL:
-        {
-            Message *message_ptr = new_message( SHUTDOWN, NULL, NULL );
-            int socket_to_chat_node;
-            struct addrinfo hints, *server_info;
-            char port_string[6];
-
-            pthread_mutex_lock( &mutex_chat_node_list );
-
-            ChatNodeListElement *current = chat_nodes->first;
-
-            //send shutdown message to clients
-            while (current->next)
-            {
-                memset(&hints, 0, sizeof(hints));
-                hints.ai_socktype = SOCK_STREAM;
-                hints.ai_family = AF_INET;
-                sprintf(port_string, "%u", current->chat_node.port);
-
-                inet_ntop(AF_INET, &(current->chat_node.ip), ip_string, INET_ADDRSTRLEN);
-
-                getaddrinfo(ip_string, port_string, &hints, &server_info);
-
-                socket_to_chat_node = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
-
-                if( connect(socket_to_chat_node, server_info->ai_addr, server_info->ai_addrlen) )
-                {
-                    perror("Error connecting to server!");
-                }
-
-                //send message through socket 
-                send_message( socket_to_chat_node, message_ptr );
-                
-                close(socket_to_chat_node);
-                current = current->next;
-            }
-            
-            pthread_mutex_unlock( &mutex_chat_node_list );
-            exit(EXIT_SUCCESS);
-            break;
-        }
-
-        // default, if none of these commands, send error message
-        default:
-            printf("%d\n", message.type);
-            perror("Not a valid message type\n");
-            break;
     }
-    pthread_exit(NULL);
-    printf("%ld\n", received_message);
+
+    if (errno == ECONNRESET || errno == ETIMEDOUT) {
+        perror("Connection reset by peer or timeout");
+    } else {
+        perror("Failed to receive message or connection closed");
+    }
+    
+    close(client_socket);  // Ensure the socket is closed if we exit the loop
+    remove_client(client_socket);  // Remove client from list on any other exit
+    return NULL;
 }
