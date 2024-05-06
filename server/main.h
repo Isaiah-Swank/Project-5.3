@@ -2,12 +2,10 @@
 #define MAIN_H
 
 
-// should always be there ...
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
-// socket/bind/listen/accept
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -15,7 +13,6 @@
 #include <signal.h>
 #include <pthread.h>
 
-// read/write/close
 #include <sys/uio.h>
 #include <sys/types.h>
 #include <unistd.h>
