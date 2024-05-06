@@ -13,10 +13,12 @@ int rec_setup_client_socket(const char *ip, int port)
         return -1;
     }
 
+    //set server address
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
 
+    //convert ip from string to binary 
     if (inet_pton(AF_INET, ip, &server_addr.sin_addr) <= 0)
     {
         perror("inet_pton");
@@ -24,6 +26,7 @@ int rec_setup_client_socket(const char *ip, int port)
         return -1;
     }
 
+    //connect to the socket
     if (connect(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
     {
         perror("connect");
@@ -48,6 +51,7 @@ void *receive_from_server(void *arg)
         return NULL;
     }
 
+    //convert port from string to int
     int server_port = atoi(server_port_str);
     if (server_port <= 0)
     {
@@ -55,6 +59,7 @@ void *receive_from_server(void *arg)
         return NULL;
     }
 
+    //get and connect to socket
     int client_socket = rec_setup_client_socket(server_ip, server_port);
     if (client_socket == -1)
     {
@@ -62,7 +67,7 @@ void *receive_from_server(void *arg)
         return NULL;
     }
 
-    while (1)
+    while (1)   //always be ready to receive
     {
         Message message;
         int bytes_read = 0;
@@ -95,7 +100,7 @@ void *receive_from_server(void *arg)
         message.chat_node.ip = ntohl(message.chat_node.ip);
         message.chat_node.port = ntohs(message.chat_node.port);
 
-        // Handle the message based on its type
+        // print message on client side
         switch (message.type)
         {
             case NOTE:
