@@ -18,7 +18,8 @@ Message* new_message(int type, ChatNode* chat_node_ptr, char* note)
 
 
 
-ssize_t send_message(int socket, Message* message_ptr) {
+ssize_t send_message(int socket, Message* message_ptr) 
+{
     ssize_t bytes_sent = 0;
     ssize_t total_bytes_sent = 0;
 
@@ -26,7 +27,8 @@ ssize_t send_message(int socket, Message* message_ptr) {
 
     // Send the message type
     bytes_sent = send(socket, &message_ptr->type, sizeof(unsigned char), 0);
-    if (bytes_sent == -1) {
+    if (bytes_sent == -1) 
+    {
         perror("Error sending message type");
         return -1;  // Return immediately if there's an error
     }
@@ -34,7 +36,8 @@ ssize_t send_message(int socket, Message* message_ptr) {
 
     // Send the ChatNode structure
     bytes_sent = send(socket, &message_ptr->chat_node, sizeof(ChatNode), 0);
-    if (bytes_sent == -1) {
+    if (bytes_sent == -1) 
+    {
         perror("Error sending ChatNode");
         return -1;  // Return immediately if there's an error
     }
@@ -42,7 +45,8 @@ ssize_t send_message(int socket, Message* message_ptr) {
 
     // Send the Note structure
     bytes_sent = send(socket, &message_ptr->note, sizeof(Note), 0);
-    if (bytes_sent == -1) {
+    if (bytes_sent == -1) 
+    {
         perror("Error sending Note");
         return -1;  // Return immediately if there's an error
     }
