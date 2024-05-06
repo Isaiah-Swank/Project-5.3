@@ -10,7 +10,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <unistd.h>
 
+// Type of request
 typedef enum {
     REQUEST_JOIN,
     REQUEST_LEAVE,
@@ -21,7 +23,7 @@ typedef enum {
 
 
 
-
+// function prototypes
 void *send_to_server(void *arg);
 int setup_client_socket(const char *ip, int port);
 
