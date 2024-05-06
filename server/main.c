@@ -4,75 +4,108 @@ pthread_mutex_t mutex_client_socket;
 pthread_mutex_t mutex_chat_node_list;
 
 ChatNodeList* chat_nodes;
-/************************************************************************
- * MAIN
- ************************************************************************/
 
-int main(int argc, char** argv) {
-    
-    int server_socket;                 // descriptor of server socket
-    struct sockaddr_in server_address; // for naming the server's listening socket
+
+
+// Main function of the server
+int main(int argc, char** argv) 
+{
+    // Variables for storing socket descriptors
+    int server_socket;
+    struct sockaddr_in server_address; // Struct to hold server address information
     int client_socket;
-    int yes=1;  
-	
-	//initialize member list
-	chat_nodes = chat_nodes_new();
+    int yes=1;  // Variable for setsockopt function to enable address reuse
 
+    // Create a new list to manage chat nodes
+    chat_nodes = chat_nodes_new();
+
+    // Path to the server properties file
     char *properties_file = "server.properties";
+    // Load server configuration properties
+    Properties *properties = property_read_properties(properties_file);
 
-    Properties *properties = property_read_properties( properties_file );
-
-    // sent when ,client disconnected
+    // Ignore SIGPIPE signals (sent when writing to a disconnected socket)
     signal(SIGPIPE, SIG_IGN);
     
-    // create unnamed network socket for server to listen on
-    if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    // Create a TCP socket to listen for incoming connections
+    if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) 
+    {
         perror("Error creating socket");
         exit(EXIT_FAILURE);
     }
 
+    // Allow the socket to reuse the address if the server is restarted
     setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(char));
     
-    // name the socket (making sure the correct network byte ordering is observed)
-    server_address.sin_family      = AF_INET;           // accept IP addresses
-    server_address.sin_addr.s_addr = htonl(INADDR_ANY); // accept clients on any interface
-    server_address.sin_port        = htons(atoi(property_get_property(properties, "SERVER_PORT")));       // port to listen on
+    // Set server address parameters
+    server_address.sin_family = AF_INET;  // Internet address family
+    server_address.sin_addr.s_addr = htonl(INADDR_ANY);  // Accept any incoming interface
+    server_address.sin_port = htons(atoi(property_get_property(properties, "SERVER_PORT")));  // Convert port number from host to network byte order
     
-    // binding unnamed socket to a particular port
-    if (bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address)) != 0) {
+    // Bind the socket to the server address
+    if (bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address)) != 0) 
+    {
         perror("Error binding socket");
         exit(EXIT_FAILURE);
     }
     
-    // listen for client connections (pending connections get put into a queue)
-    if (listen(server_socket, NUM_CONNECTIONS) != 0) {
+    // Listen on the socket for incoming connections
+    if (listen(server_socket, NUM_CONNECTIONS) != 0) 
+    {
         perror("Error listening on socket");
         exit(EXIT_FAILURE);
-        printf("Server listening on port 61209");
     }
 
-    // server loop
+    // Output the port number the server is listening on
+    printf("Server listening on port %d\n", ntohs(server_address.sin_port));
+
+    // Main server loop to handle incoming connections
     while (TRUE) 
     {
-	    pthread_mutex_lock(&mutex_client_socket);
+        // Lock the mutex before accepting new connections to synchronize access to client sockets
+        pthread_mutex_lock(&mutex_client_socket);
 
-	    client_socket = accept(server_socket, NULL, NULL);
-	    printf("Client has connected!\n");
-	    
-		pthread_t thread;
-		
-		//handle client
-		if (pthread_create(&thread, NULL, talk_to_client, (void *)&client_socket))
-		{
-			printf("Server with PID %d error creating thread", getpid());
-			exit(EXIT_FAILURE);
-		}
-	
-	        //save thread memory before closing
-		if (pthread_detach(thread))
-		{
-			printf("Server with PID %d error detaching thread", getpid());
-			exit(EXIT_FAILURE);
-		}					
+        // Accept an incoming connection
+        client_socket = accept(server_socket, NULL, NULL);
+        if (client_socket < 0) 
+        {
+            perror("Accept failed");
+            pthread_mutex_unlock(&mutex_client_socket);
+            continue;
+        }
+        //printf("Client has connected!\n");
+
+        // Allocate memory for a new socket to handle client communication
+        int *socket_ptr = malloc(sizeof(int));
+        if (socket_ptr == NULL) 
+        {
+            perror("Failed to allocate memory for client socket");
+            close(client_socket);
+            pthread_mutex_unlock(&mutex_client_socket);
+            continue;
+        }
+        *socket_ptr = client_socket;
+
+        // Create a new thread to handle communication with the connected client
+        pthread_t thread;
+        if (pthread_create(&thread, NULL, talk_to_client, socket_ptr) != 0) 
+        {
+            perror("Failed to create thread");
+            free(socket_ptr);
+            close(client_socket);
+        }
+
+        // Detach the thread to allow for independent operation
+        if (pthread_detach(thread) != 0) 
+        {
+            perror("Failed to detach thread");
+        }
+
+        // Unlock the mutex after handling the client connection
+        pthread_mutex_unlock(&mutex_client_socket);
     }
+
+    // Close the server socket when done
+    close(server_socket);
+    return 0;
 }
