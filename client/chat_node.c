@@ -2,7 +2,6 @@
 
 #include "chat_node.h"
 
-// create a chat node
 ChatNode* chat_node_new(unsigned int ip, unsigned int port, char* name)
 {
     // create a new chat node
