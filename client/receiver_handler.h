@@ -1,6 +1,7 @@
-#ifndef RECEIVER_HANDLER_H
-#define RECEIVER_HANDLER_H
+#ifndef SENDER_HANDLER_H
+#define SENDER_HANDLER_H
 
+// libraries
 #include "properties.h" 
 #include "message.h" 
 #include <stdio.h>
@@ -9,8 +10,22 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <unistd.h>
+
+// Type of request
+typedef enum {
+    REQUEST_JOIN,
+    REQUEST_LEAVE,
+    REQUEST_SHUTDOWN,
+    REQUEST_SHUTDOWN_ALL,
+    REQUEST_NOTE
+} RequestType;
 
 
-void *receive_from_server(void *arg);
-int rec_setup_client_socket(const char *ip, int port);
-#endif // RECEIVER_HANDLER_H
+
+// function prototypes
+void *send_to_server(void *arg);
+int setup_client_socket(const char *ip, int port);
+
+
+#endif 
